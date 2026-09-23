@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>布萊德城堡 Bled Castle｜懸崖千年的湖光史詩・數位走讀策展</title>
+  <meta name="description" content="斯洛維尼亞最古老城堡——布萊德城堡（Blejski grad）沉浸式數位導覽與走讀策展。探索 130 公尺懸崖上的千年傳奇、活字印刷、修士酒窖與絕景露台。">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Google Fonts: Cinzel & Noto Serif TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Noto+Serif+TC:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            stoneGold: '#D4AF37',
+            emeraldLake: '#1A5F7A',
+            emeraldDeep: '#082032',
+            parchment: '#FDFBF7',
+            castleSlate: '#1E293B',
+            terracotta: '#C85A32'
+          },
+          fontFamily: {
+            serif: ['"Noto Serif TC"', 'serif'],
+            display: ['Cinzel', '"Noto Serif TC"', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', "Noto Serif TC", sans-serif;
+      background-color: #0b131e;
+      color: #e2e8f0;
+    }
+    .font-heritage {
+      font-family: 'Cinzel', 'Noto Serif TC', serif;
+    }
+    .font-body-serif {
+      font-family: 'Noto Serif TC', serif;
+    }
+    .hero-glow {
+      background: radial-gradient(circle at 50% 30%, rgba(26, 95, 122, 0.4) 0%, rgba(11, 19, 30, 0.95) 75%);
+    }
+    .parchment-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+    }
+    .parchment-card:hover {
+      border-color: rgba(212, 175, 55, 0.6);
+      box-shadow: 0 10px 30px -10px rgba(212, 175, 55, 0.2);
+    }
+    .glass-nav {
+      background: rgba(11, 19, 30, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #D4AF37;
+    }
+    #map {
+      height: 480px;
+      width: 100%;
+      border-radius: 1rem;
+      z-index: 10;
+    }
+    .active-point {
+      border-color: #D4AF37 !important;
+      background: linear-gradient(135deg, rgba(45, 55, 72, 0.9) 0%, rgba(26, 32, 44, 0.95) 100%) !important;
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.35) !important;
+    }
+    .text-gold {
+      color: #D4AF37;
+    }
+    .bg-gold {
+      background-color: #D4AF37;
+    }
+    /* Animated wave / pulse */
+    @keyframes pulse-gold {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.05); }
+    }
+    .animate-pulse-gold {
+      animation: pulse-gold 2.5s infinite;
+    }
+  </style>
+</head>
+<body class="selection:bg-stoneGold selection:text-black">
+
+  <!-- TOP NAVIGATION BAR -->
+  <nav class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300 px-4 md:px-8 py-3.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-600 to-amber-300 flex items-center justify-center text-slate-950 font-bold shadow-md">
+          <i data-lucide="shield" class="w-5 h-5 text-slate-950"></i>
+        </div>
+        <div>
+          <span class="font-heritage text-lg md:text-xl font-bold tracking-wider text-amber-100 block leading-tight">BLEJSKI GRAD</span>
+          <span class="text-[10px] text-amber-300/80 tracking-widest uppercase font-semibold">Bled Castle 走讀導覽</span>
+        </div>
+      </div>
+
+      <!-- Nav Links -->
+      <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
+        <a href="#story" class="hover:text-amber-300 transition">歷史傳奇</a>
+        <a href="#highlights" class="hover:text-amber-300 transition">八大看點</a>
+        <a href="#interactive-tour" class="hover:text-amber-300 transition">走讀地圖</a>
+        <a href="#craft-experience" class="hover:text-amber-300 transition">工坊體驗</a>
+        <a href="#culinary-view" class="hover:text-amber-300 transition">絕景與奶油蛋糕</a>
+        <a href="#practical-guide" class="hover:text-amber-300 transition">行前攻略</a>
+      </div>
+
+      <!-- Action Button / Audio Quick Toggle -->
+      <div class="flex items-center space-x-2">
+        <button id="globalAudioBtn" onclick="toggleGlobalSpeech()" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 transition">
+          <i id="globalAudioIcon" data-lucide="volume-2" class="w-4 h-4"></i>
+          <span id="globalAudioText">語音伴讀：開</span>
+        </button>
+        <a href="#interactive-tour" class="hidden sm:inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-full text-xs font-bold bg-amber-400 text-slate-950 hover:bg-amber-300 transition shadow-lg shadow-amber-500/20">
+          <span>開始走讀</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="relative min-h-[92vh] flex items-center justify-center pt-24 pb-16 px-4 hero-glow overflow-hidden">
+    <!-- Ambient Background Elements -->
+    <div class="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:28px_28px]"></div>
+    
+    <div class="relative max-w-5xl mx-auto text-center z-10">
+      <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-slate-800/80 border border-amber-400/40 text-amber-300 text-xs tracking-widest uppercase font-semibold mb-6 shadow-inner">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+        <span>斯洛維尼亞最古老城堡・西元 1011 年歷史文獻見證</span>
+      </div>
+
+      <h1 class="font-heritage text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-wide leading-tight mb-6 drop-shadow-md">
+        懸崖千年的<span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100">湖光史詩</span>
+      </h1>
+      <p class="font-body-serif text-lg sm:text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto font-light leading-relaxed mb-8">
+        佇立於 <strong class="text-amber-300 font-normal">130 公尺</strong> 峭壁之上，俯瞰翠綠若翡翠的布萊德湖與遠方阿爾卑斯雪峰。<br class="hidden sm:inline">
+        這是一場穿越羅馬帝國、布里克森主教、古騰堡活字與修士酒窖的時空走讀。
+      </p>
+
+      <!-- Quick Metrics Ribbon -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto mb-10 text-left">
+        <div class="p-3.5 rounded-xl bg-slate-900/70 border border-slate-700/60 backdrop-blur">
+          <div class="text-xs text-slate-400 mb-1 flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i> 始建年代</div>
+          <div class="font-heritage text-xl font-bold text-amber-200">1011 AD</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">亨利二世主教封邑</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-slate-900/70 border border-slate-700/60 backdrop-blur">
+          <div class="text-xs text-slate-400 mb-1 flex items-center gap-1.5"><i data-lucide="mountain" class="w-3.5 h-3.5 text-amber-400"></i> 崖壁垂直高度</div>
+          <div class="font-heritage text-xl font-bold text-emerald-300">130 m</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">傲視全湖與湖心島</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-slate-900/70 border border-slate-700/60 backdrop-blur">
+          <div class="text-xs text-slate-400 mb-1 flex items-center gap-1.5"><i data-lucide="compass" class="w-3.5 h-3.5 text-amber-400"></i> 建築格局</div>
+          <div class="font-heritage text-xl font-bold text-amber-200">雙層庭院</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">羅馬式・哥德・文藝復興</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-slate-900/70 border border-slate-700/60 backdrop-blur">
+          <div class="text-xs text-slate-400 mb-1 flex items-center gap-1.5"><i data-lucide="wine" class="w-3.5 h-3.5 text-amber-400"></i> 特色體驗</div>
+          <div class="font-heritage text-xl font-bold text-amber-200">4 大工坊</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">印刷・封蠟・博物館・美饌</div>
+        </div>
+      </div>
+
+      <!-- Action CTA Buttons -->
+      <div class="flex flex-wrap justify-center items-center gap-4">
+        <a href="#interactive-tour" class="px-7 py-3.5 rounded-full font-semibold bg-amber-400 text-slate-950 hover:bg-amber-300 transition shadow-lg shadow-amber-500/25 flex items-center space-x-2 text-base">
+          <i data-lucide="map-pin" class="w-5 h-5"></i>
+          <span>開啟 8 大站點互動走讀</span>
+        </a>
+        <a href="#highlights" class="px-6 py-3.5 rounded-full font-semibold bg-slate-800/90 text-slate-200 border border-slate-600 hover:bg-slate-700 hover:text-white transition flex items-center space-x-2 text-base">
+          <i data-lucide="eye" class="w-5 h-5 text-amber-400"></i>
+          <span>亮點快速導覽</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 1: 歷史背景與策展引言 -->
+  <section id="story" class="py-20 px-4 md:px-8 max-w-6xl mx-auto border-t border-slate-800">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2 class="text-xs tracking-widest text-amber-400 uppercase font-semibold mb-2">Heritage & Context</h2>
+      <h3 class="font-heritage text-3xl md:text-4xl font-bold text-white mb-4">千年的主教城堡，守護阿爾卑斯之門</h3>
+      <p class="text-slate-400 font-body-serif leading-relaxed">
+        從西元 1004 年神聖羅馬帝國皇帝亨利二世將布萊德莊園封贈給布里克森（Brixen）主教，到 1011 年文獻中首次記載城堡要塞「castellum Veldes」，布萊德城堡歷經羅馬防衛塔、哥德式城垣、1511年大地震後重建的巴洛克小教堂，至今已逾千年。
+      </p>
+    </div>
+
+    <!-- 3 Core Historical Pillars -->
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="parchment-card p-6 rounded-2xl">
+        <div class="w-12 h-12 rounded-xl bg-amber-400/10 text-amber-400 flex items-center justify-center mb-5 border border-amber-400/20">
+          <i data-lucide="crown" class="w-6 h-6"></i>
+        </div>
+        <h4 class="font-heritage text-xl font-bold text-white mb-2">1. 主教統治八百年</h4>
+        <p class="text-sm text-slate-300 leading-relaxed font-body-serif">
+          布萊德城堡由南提洛爾的布里克森主教管轄達八個世紀。城堡最初僅有一座羅馬式防禦主塔與圍牆，隨著歷代擴建，演變為融合軍事要塞與貴族宮殿的複合體。
+        </p>
+      </div>
+
+      <div class="parchment-card p-6 rounded-2xl">
+        <div class="w-12 h-12 rounded-xl bg-emerald-400/10 text-emerald-400 flex items-center justify-center mb-5 border border-emerald-400/20">
+          <i data-lucide="shield-alert" class="w-6 h-6"></i>
+        </div>
+        <h4 class="font-heritage text-xl font-bold text-white mb-2">2. 懸崖絕壁防禦工事</h4>
+        <p class="text-sm text-slate-300 leading-relaxed font-body-serif">
+          城堡築於 130 公尺的垂直冰蝕石灰岩崖壁上。北面為險峻絕壁無法攀爬，南側與東側設有護城溝槽、雙層城牆與吊橋，易守難攻，是古代阿爾卑斯隘口的戰略咽喉。
+        </p>
+      </div>
+
+      <div class="parchment-card p-6 rounded-2xl">
+        <div class="w-12 h-12 rounded-xl bg-cyan-400/10 text-cyan-400 flex items-center justify-center mb-5 border border-cyan-400/20">
+          <i data-lucide="landmark" class="w-6 h-6"></i>
+        </div>
+        <h4 class="font-heritage text-xl font-bold text-white mb-2">3. 活態文化復興之地</h4>
+        <p class="text-sm text-slate-300 leading-relaxed font-body-serif">
+          今日的城堡不只是靜態陳列，更保留了中世紀古騰堡活版印刷機、修士葡萄酒封蠟工藝、450年老葡萄藤後代，並以懸崖米其林推薦餐廳與傳統奶油蛋糕聞名。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: 八大核心看點 (Highlights Cards Grid) -->
+  <section id="highlights" class="py-20 px-4 md:px-8 bg-slate-950/60 border-y border-slate-800">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+        <div>
+          <span class="text-xs tracking-widest text-amber-400 uppercase font-semibold">Curated Highlights</span>
+          <h2 class="font-heritage text-3xl md:text-4xl font-bold text-white mt-1">布萊德城堡 8 大必訪看點</h2>
+        </div>
+        <p class="text-slate-400 text-sm max-w-md mt-4 md:mt-0">
+          結合下層庭院（工藝與防禦）與上層庭院（領主殿堂、信仰與全景絕境）的完整走讀精華。
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" id="highlightsGrid">
+        <!-- Javascript will inject cards or we put semantic cards -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: 沉浸式互動走讀地圖與語音解說 -->
+  <section id="interactive-tour" class="py-20 px-4 md:px-8 max-w-7xl mx-auto">
+    <div class="text-center max-w-3xl mx-auto mb-12">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 text-xs font-semibold mb-3 border border-amber-500/20">
+        <i data-lucide="headphones" class="w-3.5 h-3.5"></i>
+        <span>互動走讀嚮導系統</span>
+      </div>
+      <h2 class="font-heritage text-3xl md:text-5xl font-bold text-white mb-3">城堡導覽地圖・點選沉浸導讀</h2>
+      <p class="text-slate-400 font-body-serif text-sm md:text-base">
+        點擊左側/下方走讀點，地圖將自動聚焦並切換專屬解說、歷史彩蛋與即時語音朗讀。
+      </p>
+    </div>
+
+    <!-- Tour Mode Selector Filter -->
+    <div class="flex flex-wrap justify-center gap-2 mb-8">
+      <button onclick="filterTour('all')" id="btn-tour-all" class="tour-filter-btn active px-4 py-2 rounded-full text-xs font-semibold bg-amber-400 text-slate-950 transition shadow">
+        全部 8 大站點 (完整全景)
+      </button>
+      <button onclick="filterTour('speed')" id="btn-tour-speed" class="tour-filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition border border-slate-700">
+        ⚡ 30分鐘精華打卡線
+      </button>
+      <button onclick="filterTour('history')" id="btn-tour-history" class="tour-filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition border border-slate-700">
+        🏛️ 60分鐘人文歷史線
+      </button>
+      <button onclick="filterTour('sensory')" id="btn-tour-sensory" class="tour-filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition border border-slate-700">
+        🍷 浪漫工藝與味覺體驗
+      </button>
+    </div>
+
+    <!-- Main Interactive Map + Story Panel Layout -->
+    <div class="grid lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left Column: Tour Stop List (5 cols) -->
+      <div class="lg:col-span-5 space-y-3 custom-scrollbar max-h-[640px] overflow-y-auto pr-1" id="tourStopList">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Right Column: Detail Showcase & Leaflet Map (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- Active Stop Detail Card -->
+        <div id="activeStopCard" class="parchment-card rounded-2xl p-6 md:p-8 transition-all duration-300 relative overflow-hidden">
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <div class="flex items-center space-x-2 mb-1">
+                <span id="activeStopBadge" class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                  站點 01
+                </span>
+                <span id="activeStopZone" class="text-xs text-slate-400">下層庭院防禦區</span>
+              </div>
+              <h3 id="activeStopTitle" class="font-heritage text-2xl md:text-3xl font-bold text-white">
+                入堡吊橋與哥德城門 (Castle Bridge & Gothic Gate)
+              </h3>
+            </div>
+
+            <!-- Speech button for this point -->
+            <button id="speakSingleBtn" onclick="speakCurrentStop()" class="p-3 rounded-xl bg-amber-400 text-slate-950 hover:bg-amber-300 transition shadow-lg shrink-0 flex items-center justify-center title='聽此站語音導讀'">
+              <i id="speakSingleIcon" data-lucide="volume-2" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <!-- Description -->
+          <p id="activeStopDesc" class="text-slate-300 font-body-serif text-sm md:text-base leading-relaxed mb-6">
+            走過橫跨防禦乾壕的厚重木造吊橋，映入眼簾的是堅固的哥德式城門與高聳外牆。這座防衛工事在西元 15 世紀為了抵禦鄂圖曼帝國擴張而大幅強化。
+          </p>
+
+          <!-- Highlights & Secret tips in Active Card -->
+          <div class="grid sm:grid-cols-2 gap-4 pt-4 border-t border-slate-700/80 mb-4">
+            <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
+              <span class="text-xs font-semibold text-amber-300 flex items-center gap-1.5 mb-1">
+                <i data-lucide="camera" class="w-3.5 h-3.5"></i> 攝影走讀重點
+              </span>
+              <p id="activeStopPhotoTip" class="text-xs text-slate-400 leading-normal">
+                站在吊橋中央往上仰望主塔，能拍出最具壓迫感的中世紀要塞線條。
+              </p>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
+              <span class="text-xs font-semibold text-emerald-300 flex items-center gap-1.5 mb-1">
+                <i data-lucide="lightbulb" class="w-3.5 h-3.5"></i> 策展私房筆記
+              </span>
+              <p id="activeStopCuratorTip" class="text-xs text-slate-400 leading-normal">
+                注意外牆上的射擊孔與原木滑輪遺跡，見證了冷兵器時期的防衛智慧。
+              </p>
+            </div>
+          </div>
+
+          <!-- Quick Navigation inside card -->
+          <div class="flex items-center justify-between pt-2 text-xs text-slate-400">
+            <button onclick="prevStop()" class="hover:text-amber-300 flex items-center gap-1 py-1 px-2 rounded bg-slate-800/80">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i> 上一站
+            </button>
+            <span id="stopCounterIndicator">1 / 8</span>
+            <button onclick="nextStop()" class="hover:text-amber-300 flex items-center gap-1 py-1 px-2 rounded bg-slate-800/80">
+              下一站 <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Interactive Leaflet Map for Bled & Castle -->
+        <div class="rounded-2xl p-4 bg-slate-900/80 border border-slate-800 shadow-xl">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="map" class="w-4 h-4 text-amber-400"></i>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-300">布萊德湖與城堡立體地理座標</span>
+            </div>
+            <span class="text-[11px] text-amber-400/80">點擊地圖標記亦可切換站點</span>
+          </div>
+          <div id="map"></div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 4: 活態工坊與互動手作模擬體驗 -->
+  <section id="craft-experience" class="py-20 px-4 md:px-8 bg-slate-950/70 border-t border-slate-800">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs tracking-widest text-amber-400 uppercase font-semibold">Hands-on Heritage</span>
+        <h2 class="font-heritage text-3xl md:text-4xl font-bold text-white mb-3">古騰堡印刷與修士封蠟互動</h2>
+        <p class="text-slate-400 font-body-serif">
+          城堡保留了歐洲文藝復興時期的兩大傳奇手藝——古騰堡手動木製印刷機與傳統蠟封酒瓶。在這裡，您可以親手點擊模擬體驗！
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        
+        <!-- Interactive Simulator 1: Gutenberg Printing -->
+        <div class="parchment-card rounded-2xl p-6 md:p-8 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center space-x-3 mb-4">
+              <div class="w-10 h-10 rounded-lg bg-amber-400/20 text-amber-300 flex items-center justify-center">
+                <i data-lucide="printer" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="font-heritage text-xl font-bold text-white">古騰堡活字印刷體驗</h3>
+                <p class="text-xs text-amber-300/80">Castle Printing Shop (Tiskarna)</p>
+              </div>
+            </div>
+            <p class="text-sm text-slate-300 font-body-serif mb-6 leading-relaxed">
+              紀念斯洛維尼亞首本印刷書作者 Primož Trubar。在古老的木製印刷機前，老師傅使用鉛字活版與手工羊皮紙為旅人印製專屬紀念文憑。
+            </p>
+
+            <!-- Interactive Printing Sandbox -->
+            <div class="bg-slate-950/80 p-5 rounded-xl border border-slate-700/80 mb-6">
+              <label class="block text-xs font-semibold text-slate-400 mb-2">輸入您的名字（壓印於布萊德古書中）：</label>
+              <div class="flex gap-2 mb-4">
+                <input type="text" id="printVisitorName" placeholder="例如：Marco Polo 或 旅行者" value="探險家 Explorer" class="bg-slate-900 border border-slate-700 text-sm rounded-lg px-3 py-2 text-amber-200 focus:outline-none focus:border-amber-400 flex-1">
+                <button onclick="simulatePrint()" class="px-4 py-2 rounded-lg bg-amber-400 text-slate-950 text-xs font-bold hover:bg-amber-300 transition flex items-center gap-1.5 shadow">
+                  <i data-lucide="stamp" class="w-4 h-4"></i> 拉動印刷手把
+                </button>
+              </div>
+
+              <!-- Output Paper Mockup -->
+              <div id="printResultPaper" class="p-4 rounded-lg bg-[#fbf6e8] text-slate-900 border-2 border-[#d3c098] font-body-serif text-center shadow-inner relative transition-all duration-500">
+                <div class="text-[10px] uppercase tracking-widest text-[#8b5a2b] font-bold">Castellum Veldes • 1011 - 2026</div>
+                <div class="font-heritage text-base font-bold text-[#4a2e12] my-1">布萊德古堡朝聖認證證書</div>
+                <p class="text-xs text-[#5c3e1e]">茲證明貴賓 <span id="printedNameDisplay" class="font-bold underline text-[#8b0000]">探險家 Explorer</span> 親臨斯洛維尼亞布萊德城堡，特此拓印古騰堡木版活字存念。</p>
+                <div class="mt-2 text-[9px] text-[#7d5f3d]">Master Printer of Bled Castle</div>
+              </div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400 flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-amber-400 shrink-0"></i>
+            <span>實地走訪：位於城堡下層庭院，現場可付費體驗製作個人化封蠟紀念證書。</span>
+          </div>
+        </div>
+
+        <!-- Interactive Simulator 2: Castle Cellar Wine & Wax Seal -->
+        <div class="parchment-card rounded-2xl p-6 md:p-8 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center space-x-3 mb-4">
+              <div class="w-10 h-10 rounded-lg bg-red-400/20 text-red-300 flex items-center justify-center">
+                <i data-lucide="wine" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="font-heritage text-xl font-bold text-white">修士酒窖與手工火漆封蠟</h3>
+                <p class="text-xs text-red-300/80">Castle Cellar (Grajska Klet)</p>
+              </div>
+            </div>
+            <p class="text-sm text-slate-300 font-body-serif mb-6 leading-relaxed">
+              由裝扮成方濟會修士的店員引導，從特製橡木桶中親手汲取斯洛維尼亞優質葡萄酒，打入軟木塞，並浸入熾熱火漆印下主教印璽。
+            </p>
+
+            <!-- Interactive Wax Seal Sandbox -->
+            <div class="bg-slate-950/80 p-5 rounded-xl border border-slate-700/80 mb-6 text-center">
+              <p class="text-xs text-slate-400 mb-3">點選按鈕為布萊德頂級珍釀完成「修士封蠟儀式」：</p>
+              <div class="flex justify-center gap-3 mb-4">
+                <button onclick="sealWineBottle('red')" class="px-3.5 py-2 rounded-lg bg-red-700 hover:bg-red-600 text-white text-xs font-bold transition flex items-center gap-1.5 shadow">
+                  <span class="w-3 h-3 rounded-full bg-red-400"></span> 經典主教紅蠟
+                </button>
+                <button onclick="sealWineBottle('gold')" class="px-3.5 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow">
+                  <span class="w-3 h-3 rounded-full bg-yellow-300"></span> 皇家尊榮金蠟
+                </button>
+              </div>
+
+              <!-- Wine Bottle Virtual Display -->
+              <div class="relative py-4 bg-slate-900 rounded-lg border border-slate-800 flex items-center justify-center">
+                <div class="flex items-center gap-4">
+                  <div class="text-left text-xs">
+                    <div class="text-amber-200 font-bold">Modri Frankinja / Zelen</div>
+                    <div class="text-[11px] text-slate-400">斯洛維尼亞國寶級葡萄品種</div>
+                    <div id="waxSealStatus" class="mt-1 text-xs text-emerald-400 font-semibold flex items-center gap-1">
+                      <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> 已完成主教紅火漆印模
+                    </div>
+                  </div>
+                  <div id="bottleSealDisplay" class="w-12 h-12 rounded-full bg-red-800 border-2 border-red-400 flex items-center justify-center text-white font-heritage font-bold text-xs shadow-lg transition-transform duration-300">
+                    BRIXEN
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-xs text-slate-400 flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-amber-400 shrink-0"></i>
+            <span>實地走訪：位於下層庭院石階旁，修士會親自為您奉上斟酒與授證儀式。</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: 絕景觀景台、城堡餐廳與布萊德奶油蛋糕 (Bled Cream Cake) -->
+  <section id="culinary-view" class="py-20 px-4 md:px-8 max-w-6xl mx-auto">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      
+      <!-- Visual Card -->
+      <div class="relative rounded-3xl overflow-hidden border border-amber-400/30 p-8 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-950 shadow-2xl">
+        <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-semibold mb-4 border border-amber-400/30">
+          <i data-lucide="utensils" class="w-3.5 h-3.5"></i>
+          <span>美食與視覺的雙重盛宴</span>
+        </div>
+        <h3 class="font-heritage text-3xl font-bold text-white mb-4">
+          上層露台：俯瞰阿爾卑斯湖光的「神之視角」
+        </h3>
+        <p class="text-slate-300 font-body-serif leading-relaxed mb-6 text-sm">
+          站在懸崖最突出的露台邊緣，眼前展開的是如翡翠般碧綠的湖水、宛若浮在水面上的布萊德島（Blejski otok）聖母升天教堂，以及遠方終年戴雪的特里格拉夫山（Triglav）。
+        </p>
+
+        <div class="space-y-3 mb-6">
+          <div class="flex items-start space-x-3 text-xs text-slate-300">
+            <i data-lucide="check" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+            <span><strong>米其林指南推薦餐廳 (Jezeršek 團隊)</strong>：將斯洛維尼亞在地食材轉化為現代當代高級料理。</span>
+          </div>
+          <div class="flex items-start space-x-3 text-xs text-slate-300">
+            <i data-lucide="check" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+            <span><strong>正統布萊德奶油蛋糕 (Blejska kremšnita)</strong>：金黃酥脆的千層皮夾著濃郁卡士達香草奶油，入口即化。</span>
+          </div>
+          <div class="flex items-start space-x-3 text-xs text-slate-300">
+            <i data-lucide="check" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+            <span><strong>魔幻黃金時刻 (Golden Hour)</strong>：傍晚日落斜陽將城堡白牆染成赤金，為攝影最絕美瞬間。</span>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-200 text-xs">
+          💡 <strong>走讀私房建議</strong>：參觀完博物館與小教堂後，在上層咖啡廳點一份 Kremšnita 配斯洛維尼亞白葡萄酒，靜靜凝望湖面划行而過的傳統 Pletna 搖櫓木船。
+        </div>
+      </div>
+
+      <!-- Historical Sweet: The Kremšnita Story -->
+      <div class="space-y-6">
+        <div class="parchment-card p-6 rounded-2xl">
+          <div class="flex items-center space-x-3 mb-3">
+            <span class="text-2xl">🍰</span>
+            <h4 class="font-heritage text-xl font-bold text-white">布萊德奶油蛋糕的 7x7 傳奇密碼</h4>
+          </div>
+          <p class="text-sm text-slate-300 font-body-serif leading-relaxed">
+            布萊德奶油蛋糕誕生於 1953 年由主廚 Ištvan Lukačević 研發。其標準尺寸為完美的 <strong>7 x 7 公分</strong>，底層與頂層為極度酥脆的奶油酥皮，中間填入輕盈的香草卡士達蛋奶醬與打發鮮奶油，頂部灑上薄薄糖粉。
+          </p>
+        </div>
+
+        <div class="parchment-card p-6 rounded-2xl">
+          <div class="flex items-center space-x-3 mb-3">
+            <span class="text-2xl">🍇</span>
+            <h4 class="font-heritage text-xl font-bold text-white">450 年世界最老葡萄藤的血脈</h4>
+          </div>
+          <p class="text-sm text-slate-300 font-body-serif leading-relaxed">
+            上層庭院牆邊種有一株珍貴的葡萄藤，它是斯洛維尼亞馬里博爾（Maribor）列入金氏世界紀錄、樹齡逾 450 年世界最古老葡萄藤（Žametovka）的直系分株，象徵城堡長青不朽的生命力。
+          </p>
+        </div>
+
+        <div class="parchment-card p-6 rounded-2xl">
+          <div class="flex items-center space-x-3 mb-3">
+            <span class="text-2xl">🔔</span>
+            <h4 class="font-heritage text-xl font-bold text-white">湖心許願鐘的淒美傳說</h4>
+          </div>
+          <p class="text-sm text-slate-300 font-body-serif leading-relaxed">
+            從城堡露台俯瞰湖心島教堂，會時常聽見清脆鐘聲。相傳 16 世紀城堡女主人 Polixena 為悼念亡夫鑄造許願鐘，運送時沉入湖底；後來教宗賜贈新鐘，如今只要拉響鐘繩三次，願望便能實現。
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 6: 走讀實用全攻略 (Practical Guide & Trekking Paths) -->
+  <section id="practical-guide" class="py-20 px-4 md:px-8 bg-slate-950/80 border-t border-slate-800">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs tracking-widest text-amber-400 uppercase font-semibold">Traveler Logistics</span>
+        <h2 class="font-heritage text-3xl md:text-4xl font-bold text-white mb-3">布萊德城堡 走讀參觀實用攻略</h2>
+        <p class="text-slate-400 font-body-serif">
+          無論是健行森林古道登頂，或是品味四季風貌，這份策展實戰手冊為您做好全方位準備。
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 mb-12">
+        <!-- Route Options -->
+        <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
+          <div class="w-10 h-10 rounded-xl bg-amber-400/10 text-amber-400 flex items-center justify-center mb-4">
+            <i data-lucide="footprints" class="w-5 h-5"></i>
+          </div>
+          <h4 class="font-heritage text-lg font-bold text-white mb-2">登頂路線與交通方式</h4>
+          <ul class="text-xs text-slate-300 space-y-2.5 font-body-serif">
+            <li class="flex items-start gap-2">
+              <span class="text-amber-400 font-bold">•</span>
+              <span><strong>健行森林步道（約 15-20 分鐘）</strong>：從湖畔北側浴場或聖馬丁教堂旁的石階穿過森林小徑上山，坡度稍陡但林蔭宜人。</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-amber-400 font-bold">•</span>
+              <span><strong>自駕或計程車（約 5 分鐘）</strong>：城堡後方設有付費停車場，下車後步行 3 分鐘平緩斜坡即達城門。</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Best Seasons & Hours -->
+        <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
+          <div class="w-10 h-10 rounded-xl bg-cyan-400/10 text-cyan-400 flex items-center justify-center mb-4">
+            <i data-lucide="calendar" class="w-5 h-5"></i>
+          </div>
+          <h4 class="font-heritage text-lg font-bold text-white mb-2">開放時間與最佳季節</h4>
+          <ul class="text-xs text-slate-300 space-y-2.5 font-body-serif">
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400 font-bold">•</span>
+              <span><strong>夏季（6-8月）</strong>：08:00 - 20:00，常舉辦中世紀騎士日與戶外音樂會。</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400 font-bold">•</span>
+              <span><strong>春秋季（4-5月、9-10月）</strong>：氣候最舒適，秋季環湖金黃森林景緻無雙。</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-cyan-400 font-bold">•</span>
+              <span><strong>冬季（11-3月）</strong>：08:00 - 18:00，雪覆城堡如童話冰雪王國。</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Tips & Etiquette -->
+        <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800">
+          <div class="w-10 h-10 rounded-xl bg-emerald-400/10 text-emerald-400 flex items-center justify-center mb-4">
+            <i data-lucide="badge-check" class="w-5 h-5"></i>
+          </div>
+          <h4 class="font-heritage text-lg font-bold text-white mb-2">策展走讀私房貼士</h4>
+          <ul class="text-xs text-slate-300 space-y-2.5 font-body-serif">
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-400 font-bold">•</span>
+              <span><strong>建議停留時間</strong>：約 1.5 至 2.5 小時，足夠完整體驗博物館、印刷所與享用下午茶。</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-400 font-bold">•</span>
+              <span><strong>無障礙說明</strong>：城堡依山而建，古老石階與斜坡較多，嬰兒車或輪椅可使用部分外圍露台。</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-emerald-400 font-bold">•</span>
+              <span><strong>串聯景點</strong>：可安排下午訪城堡、傍晚搭 Pletna 木船登湖心島，一日收穫極致湖光。</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="parchment-card p-8 rounded-3xl">
+        <h3 class="font-heritage text-2xl font-bold text-white mb-6 flex items-center gap-2">
+          <i data-lucide="help-circle" class="w-6 h-6 text-amber-400"></i> 常見走讀提問與解答
+        </h3>
+        <div class="grid md:grid-cols-2 gap-6 text-sm">
+          <div class="space-y-1.5">
+            <h5 class="text-amber-300 font-bold">Q1：只去湖心島還是城堡更好？</h5>
+            <p class="text-slate-300 font-body-serif text-xs leading-relaxed">
+              兩者視角互補！湖心島是身處湖中的靜謐體驗，而城堡則是居高臨下俯瞰「明信片全景」的唯一至高點，若時間有限，強烈推薦城堡的視野與歷史深度。
+            </p>
+          </div>
+          <div class="space-y-1.5">
+            <h5 class="text-amber-300 font-bold">Q2：在城堡用餐需要先買門票嗎？</h5>
+            <p class="text-slate-300 font-body-serif text-xs leading-relaxed">
+              是的，城堡餐廳（Blejski grad Restaurant）位於城堡收費區內，若事先預約正式晚餐套餐，通常可享門票折抵或特定入場安排（建議提前向餐廳官網確認）。
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-12 px-4 text-center border-t border-slate-800 text-slate-500 text-xs bg-[#070d14]">
+    <div class="max-w-4xl mx-auto space-y-3">
+      <div class="font-heritage text-slate-300 text-sm font-bold tracking-wider">
+        數位策展深旅系列 • 斯洛維尼亞布萊德城堡 Blejski Grad
+      </div>
+      <p class="text-slate-400 font-body-serif">
+        以人文歷史、建築防禦與活態工藝為軸心的深度沉浸走讀指南。
+      </p>
+      <div class="pt-4 text-slate-400">
+        © 2026 Bled Castle Curatorial Walk. Designed for Cultural Explorers.
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT: DATA & INTERACTION LOGIC -->
+  <script>
+    // 8 Core Tour Stops Data with coordinates, zones, tags, and detailed narratives
+    const tourStops = [
+      {
+        id: 1,
+        title: "入堡吊橋與外層哥德城門",
+        titleEn: "Bridge, Moat & Gothic Outer Gate",
+        zone: "下層防禦區",
+        badge: "01 • 防禦起點",
+        type: ["speed", "history"],
+        lat: 46.3697,
+        lng: 14.1006,
+        shortDesc: "橫跨防禦乾壕，中世紀抵禦鄂圖曼帝國擴張的第一道險關。",
+        fullDesc: "走過橫跨防禦乾壕的厚重木造吊橋，映入眼簾的是堅固的哥德式城門與高聳外牆。這座防衛工事在西元 15 世紀為了抵禦鄂圖曼帝國擴張而大幅強化，原木滑輪與射擊孔遺跡至今仍清晰可見。",
+        photoTip: "站在吊橋中央往上仰望主防衛塔，能拍出最具壓迫感與歷史縱深的中世紀要塞線條。",
+        curatorTip: "注意城門石磚上的雕鑿痕跡，見證了石灰岩就地取材的建造工法。"
+      },
+      {
+        id: 2,
+        title: "古騰堡手動木製印刷工坊",
+        titleEn: "Castle Printing Shop (Tiskarna)",
+        zone: "下層庭院工藝區",
+        badge: "02 • 活態文藝",
+        type: ["history", "sensory"],
+        lat: 46.36985,
+        lng: 14.1007,
+        shortDesc: "紀念斯洛維尼亞首部印刷書，親身體驗鉛字排版與古騰堡印刷機。",
+        fullDesc: "印刷所展示了仿製 15 世紀古騰堡木製印刷機。斯洛維尼亞宗教改革家 Primož Trubar 於 1550 年印製了第一本斯洛維尼亞語書籍。在工坊內，印刷師傅會以純手工羊皮紙為您壓印專屬紀念文憑並蓋上鉛印。",
+        photoTip: "捕捉老印刷機齒輪、墨盤與泛黃羊皮紙的微距光影，極具復古質感。",
+        curatorTip: "這裡保留的活字排版技術是歐洲印刷革命傳播至阿爾卑斯南麓的重要縮影。"
+      },
+      {
+        id: 3,
+        title: "方濟會修士酒窖與封蠟工坊",
+        titleEn: "Castle Cellar & Wine Wax Sealing",
+        zone: "下層庭院酒窖",
+        badge: "03 • 醇釀儀式",
+        type: ["sensory"],
+        lat: 46.3698,
+        lng: 14.1009,
+        shortDesc: "由修士侍酒師引導，從橡木桶取酒並親手蓋上主教火漆印章。",
+        fullDesc: "酒窖深藏於厚重石壁內，常年保持恆溫。由裝扮成方濟會修士的店員帶領，旅人可以學習用吸管從特製橡木桶中汲取斯洛維尼亞當地的 Modra Frankinja 或 Zelen 佳釀，打入軟木塞，並親手浸入熾熱火漆封存紀念。",
+        photoTip: "拍攝紅蠟滴落在酒瓶口、蓋下金屬印璽的冒煙瞬間，儀式感十足。",
+        curatorTip: "斯洛維尼亞擁有世界最古老的釀酒傳統之一，封蠟是過去貴族保存葡萄酒的嚴密標記。"
+      },
+      {
+        id: 4,
+        title: "阿爾卑斯草本藝廊與蜂療文化",
+        titleEn: "Castle Herbal Gallery & Apiculture",
+        zone: "下層庭院藝廊",
+        badge: "04 • 自然療癒",
+        type: ["history", "sensory"],
+        lat: 46.3699,
+        lng: 14.1008,
+        shortDesc: "探索斯洛維尼亞卡尼鄂拉蜂（Carniolan bee）與高山草藥傳統。",
+        fullDesc: "斯洛維尼亞是全球唯一將養蜂業列入國家文化保護的國家。草本藝廊展示了阿爾卑斯山區珍貴的天然花草茶、蜂王乳、傳統彩繪蜂箱板（Panjske končnice），散發出迷人天然草本香氣。",
+        photoTip: "彩繪蜂箱板上的民間傳奇與諷刺畫，是斯洛維尼亞獨一無二的民俗視覺。",
+        curatorTip: "斯洛維尼亞人常說『如蜜蜂般勤勞』，這裡能體會人與自然和諧共處的智慧。"
+      },
+      {
+        id: 5,
+        title: "聖阿爾博因與聖英格曼小教堂",
+        titleEn: "Gothic Chapel of St. Alboin & St. Ingenuin",
+        zone: "上層庭院信仰中心",
+        badge: "05 • 哥德壁畫",
+        type: ["speed", "history"],
+        lat: 46.3700,
+        lng: 14.1011,
+        shortDesc: "16世紀哥德式小教堂，飾有細膩的巴洛克錯視畫與主教紋章。",
+        fullDesc: "小教堂建於 16 世紀，獻給布里克森教區的兩位主保聖人。內部在 1700 年左右繪製了華麗的巴洛克壁畫，運用了錯視畫法（Trompe-l'œil）讓拱頂顯得更高聳，並繪有神聖羅馬帝國皇帝亨利二世與其妻的肖像。",
+        photoTip: "抬頭拍攝祭壇上方的巴洛克穹頂壁畫與光線穿透哥德式長窗的光影對比。",
+        curatorTip: "仔細觀察壁畫角落的布里克森主教雙鍵徽章，是判定城堡政治歸屬的關鍵證物。"
+      },
+      {
+        id: 6,
+        title: "城堡歷史博物館（領主宅邸）",
+        titleEn: "Bled Castle Museum (Upper Hall)",
+        zone: "上層宮殿主廳",
+        badge: "06 • 千年文博",
+        type: ["history"],
+        lat: 46.3701,
+        lng: 14.1012,
+        shortDesc: "典藏從青銅時代出土孔雀飾針、斯拉夫墓葬到中世紀騎士鎧甲。",
+        fullDesc: "設於昔日的住宅主樓內，由斯洛維尼亞國家博物館策展。展覽按年代順序生動重現布萊德地區從石器時代、羅馬聚落、早期斯拉夫人定居至現代觀光發展的歷史，其中 6 世紀的『孔雀胸針』為鎮館之寶。",
+        photoTip: "博物館二樓長窗正好框住窗外的湖光山色，是經典的『畫中畫』構圖。",
+        curatorTip: "孔雀在早期基督教象徵不朽與復活，展現了早期斯拉夫與羅馬文化的交融。"
+      },
+      {
+        id: 7,
+        title: "世界最古老葡萄藤（後代株）",
+        titleEn: "Descendant of World's Oldest Vine",
+        zone: "上層南面石牆",
+        badge: "07 • 不朽生命",
+        type: ["history", "sensory"],
+        lat: 46.36995,
+        lng: 14.1013,
+        shortDesc: "源自馬里博爾 450 年黑絨葡萄藤分株，結出斯洛維尼亞的生命力。",
+        fullDesc: "生長在上層庭院面向陽光的古石牆旁。它是馬里博爾獲得金氏世界紀錄認證、逾 450 年樹齡『Old Vine（Žametovka）』的直系後代，象徵布萊德城堡歷經地震、戰爭與風霜後依舊生生不息。",
+        photoTip: "秋天時葡萄葉轉為赤金與絳紅，襯托古老灰白石牆格外迷人。",
+        curatorTip: "每年秋季城堡亦會舉行採收儀式，將釀製的少數酒品作為貴賓禮物。"
+      },
+      {
+        id: 8,
+        title: "懸崖天際觀景露台與城堡餐廳",
+        titleEn: "Panoramic Cliff Terrace & Kremšnita",
+        zone: "上層絕壁全景露台",
+        badge: "08 • 終極絕景",
+        type: ["speed", "sensory"],
+        lat: 46.3699,
+        lng: 14.1015,
+        shortDesc: "俯瞰 130 公尺下方翡翠湖面、湖心島與雪山，品嚐正統布萊德奶油蛋糕。",
+        fullDesc: "這是整座城堡最令人屏息的至高點！從 130 公尺懸崖邊緣放眼望去，翡翠綠的布萊德湖、湖心島小教堂與遠處朱利安阿爾卑斯山（Julian Alps）盡收眼底。在露台坐下品嚐 7x7cm 的正統布萊德奶油蛋糕（Kremšnita），是走讀的完美句點。",
+        photoTip: "將湖心島置於三分法構圖中心，搭配前景的城堡鐵欄杆或咖啡杯，定格明信片畫面。",
+        curatorTip: "黃昏日落前 1 小時為最佳光線時刻，湖面金光粼粼，遠山呈現夢幻粉紫暮光。"
+      }
+    ];
+
+    let currentStopIndex = 0;
+    let speechSynth = window.speechSynthesis;
+    let currentUtterance = null;
+    let globalAudioEnabled = true;
+    let mapInstance = null;
+    let markers = [];
+
+    // Initialize Page
+    document.addEventListener("DOMContentLoaded", function() {
+      lucide.createIcons();
+      renderHighlightsGrid();
+      renderTourStopList(tourStops);
+      initLeafletMap();
+      selectStop(0);
+    });
+
+    // Render Highlights Section Grid
+    function renderHighlightsGrid() {
+      const grid = document.getElementById("highlightsGrid");
+      grid.innerHTML = tourStops.map(stop => `
+        <div onclick="jumpToStop(${stop.id})" class="parchment-card p-5 rounded-2xl cursor-pointer transition-all hover:-translate-y-1 flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between text-xs text-amber-400/80 mb-2">
+              <span class="font-bold">${stop.badge}</span>
+              <span class="text-slate-400">${stop.zone}</span>
+            </div>
+            <h4 class="font-heritage text-lg font-bold text-white group-hover:text-amber-300 transition mb-2">${stop.title}</h4>
+            <p class="text-xs text-slate-300 font-body-serif leading-relaxed line-clamp-3">${stop.shortDesc}</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-[11px] text-amber-300">
+            <span>探索此站導讀</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition"></i>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    // Render Tour Stops List in Left Panel
+    function renderTourStopList(stopsToRender) {
+      const listContainer = document.getElementById("tourStopList");
+      listContainer.innerHTML = stopsToRender.map((stop, idx) => {
+        const actualIndex = tourStops.findIndex(s => s.id === stop.id);
+        const isActive = actualIndex === currentStopIndex;
+        return `
+          <div id="stop-item-${stop.id}" onclick="selectStop(${actualIndex})" class="p-4 rounded-xl cursor-pointer transition-all border ${isActive ? 'active-point' : 'bg-slate-900/70 border-slate-800 hover:border-slate-700'}">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-bold text-amber-400 uppercase tracking-wider">${stop.badge}</span>
+              <span class="text-[10px] text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded">${stop.zone}</span>
+            </div>
+            <h4 class="text-sm font-bold text-white font-heritage">${stop.title}</h4>
+            <p class="text-xs text-slate-400 mt-1 line-clamp-2">${stop.shortDesc}</p>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    // Initialize Leaflet Map
+    function initLeafletMap() {
+      // Centered at Bled Castle
+      mapInstance = L.map('map', {
+        scrollWheelZoom: false
+      }).setView([46.3699, 14.1010], 17);
+
+      // OpenStreetMap Tiles (Dark/Carto Style)
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap',
+        maxZoom: 19
+      }).addTo(mapInstance);
+
+      // Custom Castle Icon Marker Generator
+      tourStops.forEach((stop, idx) => {
+        const customIcon = L.divIcon({
+          className: 'custom-div-icon',
+          html: `<div style="background-color:#D4AF37; color:#0f172a; font-weight:bold; font-size:11px; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-center; border:2px solid #ffffff; box-shadow:0 0 10px rgba(0,0,0,0.5);">${stop.id}</div>`,
+          iconSize: [26, 26],
+          iconAnchor: [13, 13]
+        });
+
+        const marker = L.marker([stop.lat, stop.lng], { icon: customIcon }).addTo(mapInstance);
+        marker.bindPopup(`<b>${stop.badge}: ${stop.title}</b><br><span style="font-size:11px;">${stop.zone}</span>`);
+        marker.on('click', () => {
+          selectStop(idx);
+        });
+        markers.push(marker);
+      });
+
+      // Add special Lake Bled & Island indicator marker
+      const islandIcon = L.divIcon({
+        className: 'island-div-icon',
+        html: `<div style="background-color:#0284c7; color:#ffffff; font-size:10px; padding:3px 6px; border-radius:12px; font-weight:bold; white-space:nowrap; border:1px solid #ffffff; box-shadow:0 2px 6px rgba(0,0,0,0.3);">⛵ 布萊德湖心島</div>`,
+        iconSize: [80, 20],
+        iconAnchor: [40, 10]
+      });
+      L.marker([46.3625, 14.0905], { icon: islandIcon }).addTo(mapInstance)
+        .bindPopup("<b>布萊德湖心島（Blejski otok）</b><br>自城堡露台俯瞰的核心地標。");
+    }
+
+    // Select Stop Function
+    function selectStop(index) {
+      currentStopIndex = index;
+      const stop = tourStops[index];
+      if (!stop) return;
+
+      // Update Active Card Content
+      document.getElementById("activeStopBadge").innerText = stop.badge;
+      document.getElementById("activeStopZone").innerText = stop.zone;
+      document.getElementById("activeStopTitle").innerText = `${stop.title} (${stop.titleEn})`;
+      document.getElementById("activeStopDesc").innerText = stop.fullDesc;
+      document.getElementById("activeStopPhotoTip").innerText = stop.photoTip;
+      document.getElementById("activeStopCuratorTip").innerText = stop.curatorTip;
+      document.getElementById("stopCounterIndicator").innerText = `${index + 1} / ${tourStops.length}`;
+
+      // Highlight active in list
+      tourStops.forEach((s) => {
+        const el = document.getElementById(`stop-item-${s.id}`);
+        if (el) {
+          if (s.id === stop.id) {
+            el.classList.add('active-point');
+            el.classList.remove('bg-slate-900/70', 'border-slate-800');
+          } else {
+            el.classList.remove('active-point');
+            el.classList.add('bg-slate-900/70', 'border-slate-800');
+          }
+        }
+      });
+
+      // Fly map to marker
+      if (mapInstance && markers[index]) {
+        mapInstance.flyTo([stop.lat, stop.lng], 18, { animate: true, duration: 1.0 });
+        markers[index].openPopup();
+      }
+
+      // If global audio enabled, read out the stop
+      if (globalAudioEnabled) {
+        speakText(`${stop.title}。${stop.fullDesc}`);
+      }
+    }
+
+    function jumpToStop(id) {
+      const idx = tourStops.findIndex(s => s.id === id);
+      if (idx !== -1) {
+        selectStop(idx);
+        document.getElementById("interactive-tour").scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function prevStop() {
+      let prevIdx = currentStopIndex - 1;
+      if (prevIdx < 0) prevIdx = tourStops.length - 1;
+      selectStop(prevIdx);
+    }
+
+    function nextStop() {
+      let nextIdx = currentStopIndex + 1;
+      if (nextIdx >= tourStops.length) nextIdx = 0;
+      selectStop(nextIdx);
+    }
+
+    // Filter Tour Routes
+    function filterTour(filterKey) {
+      document.querySelectorAll('.tour-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-amber-400', 'text-slate-950');
+        btn.classList.add('bg-slate-800', 'text-slate-300');
+      });
+      const targetBtn = document.getElementById(`btn-tour-${filterKey}`);
+      if (targetBtn) {
+        targetBtn.classList.remove('bg-slate-800', 'text-slate-300');
+        targetBtn.classList.add('bg-amber-400', 'text-slate-950');
+      }
+
+      let filtered = tourStops;
+      if (filterKey !== 'all') {
+        filtered = tourStops.filter(s => s.type.includes(filterKey));
+      }
+      renderTourStopList(filtered);
+      if (filtered.length > 0) {
+        const firstIdx = tourStops.findIndex(s => s.id === filtered[0].id);
+        selectStop(firstIdx);
+      }
+    }
+
+    // Speech Narration Logic
+    function speakText(text) {
+      if (!('speechSynthesis' in window)) return;
+      speechSynth.cancel(); // stop previous
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.lang = 'zh-TW';
+      currentUtterance.rate = 1.0;
+      currentUtterance.pitch = 1.0;
+      speechSynth.speak(currentUtterance);
+    }
+
+    function speakCurrentStop() {
+      const stop = tourStops[currentStopIndex];
+      speakText(`${stop.title}。${stop.fullDesc} 走讀攝影重點：${stop.photoTip}`);
+    }
+
+    function toggleGlobalSpeech() {
+      globalAudioEnabled = !globalAudioEnabled;
+      const icon = document.getElementById("globalAudioIcon");
+      const txt = document.getElementById("globalAudioText");
+      if (globalAudioEnabled) {
+        txt.innerText = "語音伴讀：開";
+        icon.setAttribute("data-lucide", "volume-2");
+        speakCurrentStop();
+      } else {
+        txt.innerText = "語音伴讀：關";
+        icon.setAttribute("data-lucide", "volume-x");
+        if (speechSynth) speechSynth.cancel();
+      }
+      lucide.createIcons();
+    }
+
+    // Gutenberg Print Simulator
+    function simulatePrint() {
+      const nameInput = document.getElementById("printVisitorName").value.trim() || "探險家 Explorer";
+      const paper = document.getElementById("printResultPaper");
+      const nameDisplay = document.getElementById("printedNameDisplay");
+      
+      paper.style.transform = "scale(0.95)";
+      paper.style.opacity = "0.7";
+      setTimeout(() => {
+        nameDisplay.innerText = nameInput;
+        paper.style.transform = "scale(1)";
+        paper.style.opacity = "1";
+        // Play simple audio tone
+        playBeep();
+      }, 300);
+    }
+
+    // Wine Wax Seal Simulator
+    function sealWineBottle(color) {
+      const sealDisplay = document.getElementById("bottleSealDisplay");
+      const statusText = document.getElementById("waxSealStatus");
+      
+      if (color === 'red') {
+        sealDisplay.className = "w-12 h-12 rounded-full bg-red-800 border-2 border-red-400 flex items-center justify-center text-white font-heritage font-bold text-xs shadow-lg transition-transform duration-300 scale-110";
+        sealDisplay.innerText = "BRIXEN";
+        statusText.innerHTML = `<i data-lucide="check-circle" class="w-3.5 h-3.5"></i> 已完成主教紅火漆印模`;
+        statusText.className = "mt-1 text-xs text-red-400 font-semibold flex items-center gap-1";
+      } else {
+        sealDisplay.className = "w-12 h-12 rounded-full bg-amber-500 border-2 border-amber-200 flex items-center justify-center text-slate-950 font-heritage font-bold text-xs shadow-lg transition-transform duration-300 scale-110";
+        sealDisplay.innerText = "ROYAL";
+        statusText.innerHTML = `<i data-lucide="check-circle" class="w-3.5 h-3.5"></i> 已完成皇家金火漆印模`;
+        statusText.className = "mt-1 text-xs text-amber-300 font-semibold flex items-center gap-1";
+      }
+      playBeep(520);
+      lucide.createIcons();
+      setTimeout(() => {
+        sealDisplay.classList.remove('scale-110');
+      }, 300);
+    }
+
+    // Simple Web Audio Feedback tone
+    function playBeep(freq = 440) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+      } catch (e) {}
+    }
+  </script>
+</body>
+</html>
